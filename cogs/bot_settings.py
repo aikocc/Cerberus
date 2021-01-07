@@ -83,7 +83,7 @@ class BotSettings(utils.Cog):
 
         # Create settings menu
         key_display_function = lambda k: getattr(ctx.guild.get_role(k), 'mention', 'none')
-        menu = utils.SettingsMenuIterableBase(cache_key='role_multiplier', key_display_function=key_display_function, value_display_function=str)
+        menu = utils.SettingsMenuIterableBase(cache_key='role_multiplier', key_display_function=key_display_function, value_display_function=str, default_type=dict())
         menu.add_convertable_value("What role would you like to add a multiplier to?", commands.RoleConverter)
         menu.add_convertable_value("How many points per message? `default: 1`", float)
         menu.iterable_add_callback = utils.SettingsMenuOption.get_set_iterable_add_callback(
