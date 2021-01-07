@@ -33,10 +33,6 @@ class UserMessageHandler(utils.Cog):
             self.logger.info("Storing 0 cached messages in database")
             return
 
-
-        # Grab data
-        point_data_dict = self.bot.guild_settings[user.guild.id].setdefault('role_multiplier', dict())
-
         # Get the messages we want to save
         currently_saving = self.cached_for_saving.copy()  # Make a copy to fend off the race conditions
         for m in currently_saving:
@@ -56,9 +52,10 @@ class UserMessageHandler(utils.Cog):
         member_points = {}
 
         for member in members:
+            # Get Data
             member_id = member[0]
             guild_id = member[1]
-
+            point_data_dict = self.bot.guild_settings[guild_id].setdefault('role_multiplier', dict())
             guild = self.bot.get_guild[guild_id]
             member_roles_ids = set(guild.get_member(member_id)._roles)
 
