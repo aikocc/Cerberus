@@ -42,7 +42,7 @@ class UserMessageHandler(utils.Cog):
                 pass
 
         # Get members with their respective guilds
-        members_of_cached_messages = [[message.author.id, message.guild.id] for message in currently_saving if i.author.bot is False and i.guild is not None]
+        members_of_cached_messages = [[message.author.id, message.guild.id] for message in currently_saving if message.author.bot is False and message.guild is not None]
 
         members = []
         for x in len(members_of_cached_messages):
