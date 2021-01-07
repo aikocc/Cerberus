@@ -45,9 +45,9 @@ class UserMessageHandler(utils.Cog):
         members_of_cached_messages = [[message.author.id, message.guild.id] for message in currently_saving if message.author.bot is False and message.guild is not None]
 
         members = []
-        for x in len(members_of_cached_messages):
-            if members_of_cached_messages[x][0] not in [x[0] for x in members]:
-                members.append(members_of_cached_messages[x])
+        for x in members_of_cached_messages:
+            if x[0] not in [x[0] for x in members]:
+                members.append(x)
 
         member_points = {}
 
