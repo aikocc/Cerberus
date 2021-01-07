@@ -62,7 +62,7 @@ class UserMessageHandler(utils.Cog):
             guild = self.bot.get_guild[guild_id]
             member_roles_ids = set(guild.get_member(member_id)._roles)
 
-            points = next(multiplier for role_id, multiplier in point_data.items() if role_id in member_roles_ids, 1)
+            points = next((multiplier for role_id, multiplier in point_data.items() if role_id in member_roles_ids), 1)
             member_points[member_id] = points
 
         # Sort them into a nice easy tuple
