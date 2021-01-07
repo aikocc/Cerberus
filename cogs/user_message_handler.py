@@ -55,7 +55,7 @@ class UserMessageHandler(utils.Cog):
             # Get Data
             member_id = member[0]
             guild_id = member[1]
-            point_data_dict = self.bot.guild_settings[guild_id].setdefault('role_multiplier', dict())
+            point_data = self.bot.guild_settings[guild_id].setdefault('role_multiplier', dict())
             guild = self.bot.get_guild(guild_id)
             member_roles_ids = set(guild.get_member(member_id)._roles)
 
@@ -69,12 +69,13 @@ class UserMessageHandler(utils.Cog):
         new_records = []
 
         for (created_at, author_id, guild_id, channel_id) in records:
+            
             try:
                 points = member_points[author_id]
-                new_records =+ (created_at, author_id, guild_id, channel_id, points)
             except IndexError:
                 points = 1
-                new_records =+ (created_at, author_id, guild_id, channel_id, points)
+
+            new_records =+ (created_at, author_id, guild_id, channel_id, points)
 
         # Copy the records into the db
         self.logger.info(f"Storing {len(new_records)} cached messages in database")
