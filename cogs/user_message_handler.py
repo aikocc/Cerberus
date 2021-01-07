@@ -56,7 +56,7 @@ class UserMessageHandler(utils.Cog):
             member_id = member[0]
             guild_id = member[1]
             point_data_dict = self.bot.guild_settings[guild_id].setdefault('role_multiplier', dict())
-            guild = self.bot.get_guild[guild_id]
+            guild = self.bot.get_guild(guild_id)
             member_roles_ids = set(guild.get_member(member_id)._roles)
 
             points = next((multiplier for role_id, multiplier in point_data.items() if role_id in member_roles_ids), 1)
