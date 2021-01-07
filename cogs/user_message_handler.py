@@ -33,6 +33,10 @@ class UserMessageHandler(utils.Cog):
             self.logger.info("Storing 0 cached messages in database")
             return
 
+
+        # Grab data
+        point_data_dict = self.bot.guild_settings[user.guild.id].setdefault('role_multiplier', dict())
+
         # Get the messages we want to save
         currently_saving = self.cached_for_saving.copy()  # Make a copy to fend off the race conditions
         for m in currently_saving:
@@ -41,16 +45,44 @@ class UserMessageHandler(utils.Cog):
             except ValueError:
                 pass
 
+        # Get members with their respective guilds
+        members_of_cached_messages = [[message.author.id, message.guild.id] for message in currently_saving if i.author.bot is False and i.guild is not None]
+
+        members = []
+        for x in len(members_of_cached_messages):
+            if members_of_cached_messages[x][0] not in [x[0] for x in members]:
+                members.append(members_of_cached_messages[x])
+
+        member_points = {}
+
+        for member in members:
+            member_id = member[0]
+            guild_id = member[1]
+
+            guild = self.bot.get_guild[guild_id]
+            member_roles_ids = set(guild.get_member(member_id)._roles)
+
+            points = next(multiplier for role_id, multiplier in point_data.items() if role_id in member_roles_ids, 1)
+            member_points[member_id] = points
+
         # Sort them into a nice easy tuple
         records = [(i.created_at, i.author.id, i.guild.id, i.channel.id) for i in currently_saving if i.author.bot is False and i.guild is not None]
+
+        # Recreate records with points
+        new_records = []
+
+        for _, (created_at, author_id, guild_id, channel_id) in enumerate(records):
+            try:
+                points = member_points[author_id]
+                new_records =+ (created_at, author_id, guild_id, channel_id, points)
 
         # Copy the records into the db
         self.logger.info(f"Storing {len(records)} cached messages in database")
         async with self.bot.database() as db:
             await db.conn.copy_records_to_table(
                 'user_messages',
-                columns=('timestamp', 'user_id', 'guild_id', 'channel_id'),
-                records=records
+                columns=('timestamp', 'user_id', 'guild_id', 'channel_id', 'points'),
+                records=new_records
             )
 
     @utils.Cog.listener("on_message")

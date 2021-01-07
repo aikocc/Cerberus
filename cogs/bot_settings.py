@@ -32,6 +32,10 @@ class BotSettings(utils.Cog):
                 'callback': self.bot.get_command("setup roles"),
             },
             {
+                'display': "Role multiplier settings",
+                'callback': self.bot.get_command("setup rolemultipliers"),
+            },
+            {
                 'display': "Blacklisted channel settings",
                 'callback': self.bot.get_command("setup blacklistedchannels"),
             },
@@ -67,6 +71,26 @@ class BotSettings(utils.Cog):
         )
         menu.iterable_delete_callback = utils.SettingsMenuOption.get_set_iterable_delete_callback(
             table_name="role_list", column_name="role_id", cache_key="role_gain", database_key="RoleGain"
+        )
+        await menu.start(ctx)
+
+    @setup.command()
+    @utils.checks.meta_command()
+    async def rolemultipliers(self, ctx:utils.Context):
+        """
+        Run the bot setup.
+        """
+
+        # Create settings menu
+        key_display_function = lambda k: getattr(ctx.guild.get_role(k), 'mention', 'none')
+        menu = utils.SettingsMenuIterableBase(cache_key='role_multiplier', key_display_function=key_display_function, value_display_function=str)
+        menu.add_convertable_value("What role would you like to add a multiplier to?", commands.RoleConverter)
+        menu.add_convertable_value("How many points per message? `default: 1`", float)
+        menu.iterable_add_callback = utils.SettingsMenuOption.get_set_iterable_add_callback(
+            table_name="role_list", column_name="role_id", cache_key="role_multiplier", database_key="RoleMultiplier"
+        )
+        menu.iterable_delete_callback = utils.SettingsMenuOption.get_set_iterable_delete_callback(
+            table_name="role_list", column_name="role_id", cache_key="role_multiplier", database_key="RoleMultiplier"
         )
         await menu.start(ctx)
 

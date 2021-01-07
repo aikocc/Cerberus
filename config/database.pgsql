@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS user_messages(
     timestamp TIMESTAMP,
     user_id BIGINT,
     guild_id BIGINT,
-    channel_id BIGINT
+    channel_id BIGINT,
+    points REAL
 );
 
 
