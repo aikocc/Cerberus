@@ -71,13 +71,16 @@ class UserMessageHandler(utils.Cog):
         # Recreate records with points
         new_records = []
 
-        for _, (created_at, author_id, guild_id, channel_id) in enumerate(records):
+        for (created_at, author_id, guild_id, channel_id) in records:
             try:
                 points = member_points[author_id]
                 new_records =+ (created_at, author_id, guild_id, channel_id, points)
+            except IndexError:
+                points = 1
+                new_records =+ (created_at, author_id, guild_id, channel_id, points)
 
         # Copy the records into the db
-        self.logger.info(f"Storing {len(records)} cached messages in database")
+        self.logger.info(f"Storing {len(new_records)} cached messages in database")
         async with self.bot.database() as db:
             await db.conn.copy_records_to_table(
                 'user_messages',
